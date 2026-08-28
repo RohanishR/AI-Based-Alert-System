@@ -1,0 +1,35 @@
+Help on method __init__ in module deprecate.proxy:
+
+__init__(
+    obj: Any,
+    name: str,
+    *,
+    target: Any = None,
+    args_mapping: Optional[dict[str, Optional[str]]] = None,
+    args_extra: Optional[dict[str, Any]] = None,
+    attrs_mapping: Optional[dict[str, Optional[str]]] = None,
+    deprecated_in: str = '',
+    remove_in: str = '',
+    num_warns: int = 1,
+    stream: Optional[Callable[..., NoneType]] = functools.partial(<built-in function warn>, category=<class 'FutureWarning'>),
+    template_mgs: Optional[str] = None,
+    read_only: bool = False,
+    docstring_style: str = 'auto',
+    _misconfigured_override: bool = False
+) -> None method of deprecate.proxy._DeprecatedProxy instance
+    Initialise the proxy with typed runtime/config dataclasses.
+
+    ``__config`` stores private mutable runtime state in :class:`~deprecate._types._ProxyConfig` (obj, stream,
+    num_warns, read_only, args_extra, warned counter).
+
+    ``__deprecated__`` is the public metadata interface consumed by audit tools
+    (:func:`~deprecate.audit.validate_deprecation_wrapper`,
+    :func:`~deprecate.audit.find_deprecation_wrappers`, etc.)
+    as a :class:`~deprecate._types.DeprecationConfig` instance aligned with the ``@deprecated`` schema.
+
+    ``_misconfigured_override`` is a private hook used by :func:`~deprecate.deprecated` when it delegates to
+    :func:`~deprecate.deprecated_class` for class targets: it lets the caller pre-compute misconfig signals
+    (raw ``target=False`` plus NOTIFY+args_mapping / NOTIFY+args_extra detected upstream) before the proxy
+    rewrites them away, so the final frozen :class:`~deprecate._types.DeprecationConfig` records every signal
+    in one place.
+
