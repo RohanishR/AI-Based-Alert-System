@@ -1,6 +1,7 @@
 import time
 import cv2
 import yaml
+import numpy as np
 from ultralytics import YOLO
 
 class VehicleDetector:
@@ -13,10 +14,17 @@ class VehicleDetector:
         with open(config_path, "r") as f:
             self.config = yaml.safe_load(f)
             
-        self.conf_threshold = self.config.get("confidence_threshold", 0.4)
+        self.conf_threshold = self.config.get("confidence_threshold", 0.25)
         self.model_path = self.config.get("model_path", "yolov8n.pt")
+        self.input_size = self.config.get("input_size", 640)
         self.target_classes = set(self.config.get("target_classes", []))
         self.class_mapping = self.config.get("class_mapping", {})
+        
+        # Build a reverse lookup: COCO class_id -> our standardized name
+        # This is the ONLY source of truth for class name resolution
+        self._id_to_name = {}
+        for cid, name in self.class_mapping.items():
+            self._id_to_name[int(cid)] = name
         
         # Initialize YOLOv8 model
         print(f"Loading YOLO model from {self.model_path}...")
@@ -35,43 +43,96 @@ class VehicleDetector:
         
         start_time = time.time()
         
-        # Run inference (verbose=False avoids console spam per frame)
-        results = self.model(frame, verbose=False, conf=self.conf_threshold)
+        # Run inference with fixed input size for consistent results
+        results = self.model(
+            frame,
+            verbose=False,
+            conf=self.conf_threshold,
+            imgsz=self.input_size
+        )
         
         inference_time = time.time() - start_time
         
         detections = []
         
         if len(results) > 0:
-            result = results[0]  # Get results for the single image
+            result = results[0]
             boxes = result.boxes
             
-            for box in boxes:
-                # Extract properties
-                cls_id = int(box.cls[0].item())
-                conf = float(box.conf[0].item())
-                x1, y1, x2, y2 = box.xyxy[0].cpu().numpy()
+            if boxes is not None and len(boxes) > 0:
+                # Batch extraction for speed (avoids per-box Python loop overhead)
+                cls_ids = boxes.cls.cpu().numpy().astype(int)
+                confs = boxes.conf.cpu().numpy().astype(float)
+                xyxys = boxes.xyxy.cpu().numpy().astype(float)
                 
-                # Check mapped name in config first
-                class_name = self.class_mapping.get(cls_id, None)
-                
-                # Fallback to model's default names if missing from config
-                if not class_name and hasattr(self.model, 'names') and cls_id in self.model.names:
-                    raw_name = self.model.names[cls_id]
-                    class_name = "pedestrian" if raw_name == "person" else raw_name
-                
-                if not class_name:
-                    class_name = f"class_{cls_id}"
-                
-                # Filter strictly to target classes
-                if class_name in self.target_classes:
+                for idx in range(len(cls_ids)):
+                    cls_id = int(cls_ids[idx])
+                    conf = float(confs[idx])
+                    x1, y1, x2, y2 = xyxys[idx]
+                    
+                    # Resolve class name via our mapping
+                    class_name = self._id_to_name.get(cls_id, None)
+                    
+                    # Fallback: use model's native name for unmapped IDs
+                    if class_name is None and hasattr(self.model, 'names') and cls_id in self.model.names:
+                        raw_name = self.model.names[cls_id]
+                        class_name = "pedestrian" if raw_name == "person" else raw_name
+                    
+                    if class_name is None:
+                        continue  # Skip completely unknown classes
+                    
+                    # Only keep target classes
+                    if class_name not in self.target_classes:
+                        continue
+                        
                     detections.append({
                         "class": class_name,
                         "confidence": conf,
                         "bbox": (float(x1), float(y1), float(x2), float(y2))
                     })
+        
+        # Suppress pedestrian detections that overlap with motorcycles/bicycles
+        # (a rider on a bike is not a pedestrian)
+        detections = self._suppress_riders(detections)
                     
         return detections, inference_time
+    
+    @staticmethod
+    def _box_iou(box_a, box_b):
+        """Compute IoU between two (x1,y1,x2,y2) boxes."""
+        xa = max(box_a[0], box_b[0])
+        ya = max(box_a[1], box_b[1])
+        xb = min(box_a[2], box_b[2])
+        yb = min(box_a[3], box_b[3])
+        inter = max(0, xb - xa) * max(0, yb - ya)
+        area_a = (box_a[2] - box_a[0]) * (box_a[3] - box_a[1])
+        area_b = (box_b[2] - box_b[0]) * (box_b[3] - box_b[1])
+        union = area_a + area_b - inter
+        return inter / union if union > 0 else 0
+    
+    @staticmethod
+    def _suppress_riders(detections, iou_threshold=0.3):
+        """
+        Remove pedestrian detections that overlap with motorcycle/bicycle boxes.
+        In Indian traffic footage, YOLO often detects both the two-wheeler AND the 
+        rider as separate objects. The rider should not be counted as a pedestrian.
+        """
+        two_wheelers = [d for d in detections if d["class"] in ("motorcycle", "bicycle")]
+        if not two_wheelers:
+            return detections
+            
+        filtered = []
+        for det in detections:
+            if det["class"] == "pedestrian":
+                # Check if this pedestrian overlaps significantly with any two-wheeler
+                overlaps = any(
+                    VehicleDetector._box_iou(det["bbox"], tw["bbox"]) > iou_threshold
+                    for tw in two_wheelers
+                )
+                if overlaps:
+                    continue  # Skip this pedestrian — it's a rider
+            filtered.append(det)
+        return filtered
         
     def draw_detections(self, frame, detections, inference_time=None):
         """

@@ -1,5 +1,6 @@
 # ByteTrack configuration
-track_thresh: 0.25      # Detection confidence threshold for tracking
-match_thresh: 0.8       # IoU matching threshold
-max_age: 30             # Frames to keep a lost track alive before removing
-history_length: 15      # Number of historical points to keep for motion trails and prediction
+track_thresh: 0.3               # Minimum confidence to start a NEW track
+match_thresh: 0.85              # IoU matching threshold (higher = stricter match)
+max_age: 50                     # Frames to keep a lost track alive (higher = survives occlusion better)
+history_length: 15              # Number of historical centroid positions to keep
+minimum_consecutive_frames: 3   # Require N consecutive detections before confirming a track

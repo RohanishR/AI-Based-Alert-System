@@ -1,5 +1,6 @@
-model_path: "yolov8n.pt" # Default COCO pretrained model
-confidence_threshold: 0.4
+model_path: "yolov8n.pt"        # Default COCO pretrained model
+confidence_threshold: 0.25       # Lowered to let tracker handle borderline detections
+input_size: 640                  # YOLO input size (square)
 
 # Target classes we want to detect
 target_classes:
@@ -11,15 +12,14 @@ target_classes:
   - "bicycle"
   - "pedestrian"
 
-# Class mapping: map model class IDs to standardized string names.
-# This makes it easy to swap between COCO and a fine-tuned Indian dataset model later.
+# Class mapping: map COCO class IDs to standardized names.
+# Swap this section entirely when using a fine-tuned Indian traffic model.
 class_mapping:
-  # Standard COCO IDs
-  0: "pedestrian"  # Mapped from 'person'
+  0: "pedestrian"   # COCO 'person'
   1: "bicycle"
   2: "car"
   3: "motorcycle"
   5: "bus"
   7: "truck"
-  # Custom classes for fine-tuned models can be added below
-  # e.g., 8: "auto_rickshaw"
+  # Custom classes for fine-tuned models:
+  # 8: "auto_rickshaw"
