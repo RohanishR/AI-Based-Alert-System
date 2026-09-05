@@ -1,0 +1,11 @@
+# Alert cooldown — suppress duplicate alerts for the same vehicle pair
+cooldown_seconds: 5.0
+
+# Default intersection/location name for generated alerts
+location: "Intersection_A"
+
+# Alert log file path
+log_file: "alerts/alert_log.jsonl"
+
+# Maximum number of alerts to keep in memory for dashboard display
+max_history: 200
