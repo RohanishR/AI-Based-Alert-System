@@ -1,0 +1,11 @@
+# TTC (Time-to-Collision) thresholds
+ttc_threshold: 2.0             # seconds — pairs below this are flagged as at-risk
+high_severity_threshold: 1.0   # TTC < 1.0s → "high" severity
+medium_severity_threshold: 2.0 # 1.0s ≤ TTC < 2.0s → "medium" severity
+
+# Proximity filter — only compute TTC for vehicle pairs within this radius (pixels or meters)
+# Vehicles further apart are skipped early to avoid O(n²) blowup
+proximity_radius: 300.0
+
+# Minimum closing speed to consider (filters out near-stationary convergence noise)
+min_closing_speed: 1.0         # pixels/s (or meters/s if calibrated)

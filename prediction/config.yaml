@@ -1,0 +1,19 @@
+# Kalman filter noise parameters
+measurement_noise: 4.0        # R diagonal — pixel² uncertainty from tracker bbox center
+process_noise: 0.5            # Q scaling — acceleration uncertainty
+initial_covariance: 100.0     # P diagonal — initial state uncertainty
+
+# Prediction horizons (seconds into the future)
+prediction_horizons:
+  - 1.0
+  - 2.0
+  - 3.0
+
+# Minimum history points before velocity can be bootstrapped
+min_history_for_velocity: 2
+
+# Stale filter cleanup — remove filters not updated for this many seconds
+stale_timeout: 3.0
+
+# Path to calibration .npy file (null = use raw pixel coordinates)
+calibration_file: null
