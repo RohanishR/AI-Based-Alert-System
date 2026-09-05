@@ -1,6 +1,6 @@
-# ByteTrack configuration
-track_thresh: 0.3               # Minimum confidence to start a NEW track
-match_thresh: 0.85              # IoU matching threshold (higher = stricter match)
-max_age: 50                     # Frames to keep a lost track alive (higher = survives occlusion better)
+# ByteTrack configuration — tuned for aerial/drone intersection footage
+track_thresh: 0.15              # Lowered: start tracks even for low-confidence detections
+match_thresh: 0.7               # Lowered from 0.85: more lenient IoU matching for small aerial vehicles
+max_age: 60                     # Increased: keep lost tracks alive longer (vehicles temporarily occluded)
 history_length: 15              # Number of historical centroid positions to keep
-minimum_consecutive_frames: 3   # Require N consecutive detections before confirming a track
+minimum_consecutive_frames: 1   # Reduced from 3: confirm track after just 1 detection (aerial view = fewer frames per vehicle)

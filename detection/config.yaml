@@ -1,6 +1,6 @@
 model_path: "yolov8n.pt"        # Default COCO pretrained model
-confidence_threshold: 0.25       # Lowered to let tracker handle borderline detections
-input_size: 640                  # YOLO input size (square)
+confidence_threshold: 0.15       # Lowered for aerial/drone footage where vehicles appear small
+input_size: 1280                 # Increased from 640 to detect smaller objects in aerial views
 
 # Target classes we want to detect
 target_classes:
