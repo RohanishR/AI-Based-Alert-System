@@ -17,7 +17,7 @@ Run full pipeline (requires video file):
     python pipeline/run_demo.py --video path/to/video.mp4
 
 Run dashboard (in separate terminal):
-    streamlit run alerts/dashboard.py
+    python -m streamlit run alerts/dashboard.py
 """
 
 import argparse
@@ -186,7 +186,7 @@ def run_full_pipeline(video_path):
     print(f"\n  Done! {frame_count} frames processed.")
     print(f"  Total alerts generated: {stats['total_alerts']}")
     print(f"\n  Alert log: alerts/alert_log.jsonl")
-    print(f"  Run dashboard: streamlit run alerts/dashboard.py")
+    print(f"  Run dashboard: python -m streamlit run alerts/dashboard.py")
 
 
 # ---------------------------------------------------------------------------
@@ -265,7 +265,7 @@ def run_simulated_demo():
             print(f"    ... and {len(lines) - 10} more")
 
     print(f"\n  To view the dashboard:")
-    print(f"    streamlit run alerts/dashboard.py\n")
+    print(f"    python -m streamlit run alerts/dashboard.py\n")
 
 
 # ---------------------------------------------------------------------------

@@ -7,7 +7,7 @@ Prediction System. Processes the Demo video through the full pipeline
 annotated frames with bounding boxes alongside alerts.
 
 Run:
-    streamlit run alerts/dashboard.py
+    python -m streamlit run alerts/dashboard.py
 
 This is a SIMULATION dashboard for academic demonstration purposes.
 No real V2I/C-V2X communication occurs.
@@ -342,7 +342,11 @@ st.markdown("""
 # ---------------------------------------------------------------------------
 
 LOG_FILE = "alerts/alert_log.jsonl"
-VIDEO_PATH = "data/raw_videos/Demo.mp4"
+DEFAULT_VIDEOS = [
+    "data/raw_videos/videoplayback.mp4",
+    "data/raw_videos/Demo.mp4",
+]
+VIDEO_PATH = next((v for v in DEFAULT_VIDEOS if os.path.exists(v)), "data/raw_videos/videoplayback.mp4")
 
 
 def load_alerts_from_log(log_path=LOG_FILE):
@@ -773,14 +777,32 @@ def main():
             frame_skip = st.slider("Frame Skip", 1, 10, 2,
                                    help="Process every Nth frame. Higher = faster but less smooth.")
 
-            video_file = VIDEO_PATH
+            video_dir = "data/raw_videos"
+            video_options = []
+            if os.path.exists(video_dir):
+                video_options = [
+                    os.path.join(video_dir, f).replace("\\", "/")
+                    for f in os.listdir(video_dir)
+                    if f.lower().endswith((".mp4", ".avi", ".mov", ".mkv"))
+                ]
+            if not video_options:
+                video_options = [VIDEO_PATH]
+
+            video_file = st.selectbox(
+                "Select Video File",
+                video_options,
+                index=0,
+                help="Choose video to process from data/raw_videos/"
+            )
+
             if not os.path.exists(video_file):
                 st.error(f"Video not found: {video_file}")
-                video_file = None
-
-            start_btn = st.button("Start Live Tracking",
-                                  type="primary", use_container_width=True)
+                start_btn = False
+            else:
+                start_btn = st.button("Start Live Tracking",
+                                      type="primary", use_container_width=True)
         else:
+            video_file = VIDEO_PATH
             start_btn = False
             frame_skip = 3
 
@@ -842,7 +864,7 @@ def main():
 
         # Process the video
         results = process_video_live(
-            VIDEO_PATH,
+            video_file,
             frame_placeholder,
             stats_placeholder,
             alert_feed_placeholder,
