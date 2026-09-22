@@ -18,34 +18,34 @@ from analytics.analytics_engine import AnalyticsEngine
 # ---------------------------------------------------------------------------
 
 COLORS = {
-    "high": "#ef4444",
-    "medium": "#f59e0b",
-    "blue": "#60a5fa",
-    "emerald": "#34d399",
-    "purple": "#a78bfa",
-    "pink": "#f472b6",
-    "cyan": "#22d3ee",
-    "amber": "#fbbf24",
-    "slate": "#94a3b8",
+    "high": "#FF2A55",
+    "medium": "#FFD700",
+    "blue": "#00F0FF",
+    "emerald": "#00FFCC",
+    "purple": "#B537F2",
+    "pink": "#FF3399",
+    "cyan": "#00FFFF",
+    "amber": "#FFB800",
+    "slate": "#777777",
 }
 
 CLASS_COLORS = {
-    "car": "#60a5fa",
-    "truck": "#f59e0b",
-    "bus": "#a78bfa",
-    "motorcycle": "#34d399",
-    "bicycle": "#22d3ee",
-    "pedestrian": "#f472b6",
-    "auto_rickshaw": "#fbbf24",
+    "car": "#00F0FF",
+    "truck": "#FFB800",
+    "bus": "#B537F2",
+    "motorcycle": "#00FFCC",
+    "bicycle": "#00FFFF",
+    "pedestrian": "#FF3399",
+    "auto_rickshaw": "#FFD700",
 }
 
 CHART_LAYOUT = dict(
     paper_bgcolor="rgba(0,0,0,0)",
-    plot_bgcolor="rgba(19,24,37,0.8)",
-    font=dict(family="Inter, sans-serif", color="#94a3b8", size=12),
+    plot_bgcolor="rgba(0,0,0,0)",
+    font=dict(family="Inter, sans-serif", color="#888888", size=12),
     margin=dict(l=40, r=20, t=40, b=40),
-    xaxis=dict(gridcolor="rgba(30,39,64,0.6)", zerolinecolor="#1e2740"),
-    yaxis=dict(gridcolor="rgba(30,39,64,0.6)", zerolinecolor="#1e2740"),
+    xaxis=dict(gridcolor="rgba(255,255,255,0.05)", zerolinecolor="rgba(255,255,255,0.1)"),
+    yaxis=dict(gridcolor="rgba(255,255,255,0.05)", zerolinecolor="rgba(255,255,255,0.1)"),
 )
 
 
@@ -148,10 +148,10 @@ def render_analytics_page():
 
             fig = go.Figure(data=[go.Pie(
                 labels=labels, values=values,
-                hole=0.45,
-                marker=dict(colors=colors, line=dict(color="#0b0e17", width=2)),
+                hole=0.55,
+                marker=dict(colors=colors, line=dict(color="#0A0A0A", width=3)),
                 textinfo="label+percent",
-                textfont=dict(size=11, color="#e2e8f0"),
+                textfont=dict(size=11, color="#FFFFFF", family="Inter"),
             )])
             fig.update_layout(**CHART_LAYOUT, height=350, showlegend=False)
             st.plotly_chart(fig, use_container_width=True)
@@ -180,9 +180,9 @@ def render_analytics_page():
 
             fig = go.Figure(data=[go.Bar(
                 x=labels, y=values,
-                marker=dict(color=colors, cornerradius=6),
+                marker=dict(color=colors, cornerradius=0),
                 text=values, textposition="outside",
-                textfont=dict(color="#e2e8f0", size=14, family="JetBrains Mono"),
+                textfont=dict(color="#FFFFFF", size=14, family="Space Grotesk"),
             )])
             fig.update_layout(
                 **CHART_LAYOUT, height=300,
@@ -217,25 +217,25 @@ def render_analytics_page():
 
     with col_ttc_stats:
         st.markdown(f"""
-        <div style="background: linear-gradient(145deg, #131825, #171d2e);
-                    border: 1px solid #1e2740; border-radius: 12px;
-                    padding: 20px;">
-            <div style="color: #64748b; font-size: 0.72rem; text-transform: uppercase;
-                        letter-spacing: 0.06em; margin-bottom: 14px;">TTC Statistics</div>
-            <table style="width: 100%; color: #cbd5e1; font-size: 0.9rem;">
-                <tr><td style="padding: 6px 0; color: #94a3b8;">Average</td>
-                    <td style="text-align: right; font-family: JetBrains Mono; font-weight: 600;">
+        <div style="background: #0A0A0A;
+                    border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 0px;
+                    padding: 24px;">
+            <div style="color: #777777; font-size: 0.75rem; text-transform: uppercase;
+                        letter-spacing: 0.08em; margin-bottom: 16px;">TTC Statistics</div>
+            <table style="width: 100%; color: #CCCCCC; font-size: 0.9rem;">
+                <tr><td style="padding: 8px 0; color: #888888; border-bottom: 1px solid rgba(255,255,255,0.05);">Average</td>
+                    <td style="text-align: right; font-family: JetBrains Mono; font-weight: 500; border-bottom: 1px solid rgba(255,255,255,0.05);">
                         {ttc_stats['avg']:.3f}s</td></tr>
-                <tr><td style="padding: 6px 0; color: #94a3b8;">Minimum</td>
-                    <td style="text-align: right; font-family: JetBrains Mono; font-weight: 700; color: #f87171;">
+                <tr><td style="padding: 8px 0; color: #888888; border-bottom: 1px solid rgba(255,255,255,0.05);">Minimum</td>
+                    <td style="text-align: right; font-family: JetBrains Mono; font-weight: 700; color: #FF2A55; border-bottom: 1px solid rgba(255,255,255,0.05);">
                         {ttc_stats['min']:.3f}s</td></tr>
-                <tr><td style="padding: 6px 0; color: #94a3b8;">Maximum</td>
-                    <td style="text-align: right; font-family: JetBrains Mono; font-weight: 600;">
+                <tr><td style="padding: 8px 0; color: #888888; border-bottom: 1px solid rgba(255,255,255,0.05);">Maximum</td>
+                    <td style="text-align: right; font-family: JetBrains Mono; font-weight: 500; border-bottom: 1px solid rgba(255,255,255,0.05);">
                         {ttc_stats['max']:.3f}s</td></tr>
-                <tr><td style="padding: 6px 0; color: #94a3b8;">Median</td>
-                    <td style="text-align: right; font-family: JetBrains Mono; font-weight: 600;">
+                <tr><td style="padding: 8px 0; color: #888888; border-bottom: 1px solid rgba(255,255,255,0.05);">Median</td>
+                    <td style="text-align: right; font-family: JetBrains Mono; font-weight: 500; border-bottom: 1px solid rgba(255,255,255,0.05);">
                         {ttc_stats['median']:.3f}s</td></tr>
-                <tr><td style="padding: 6px 0; color: #94a3b8;">Samples</td>
+                <tr><td style="padding: 8px 0; color: #888888;">Samples</td>
                     <td style="text-align: right; font-family: JetBrains Mono;">
                         {ttc_stats['count']}</td></tr>
             </table>
@@ -256,13 +256,13 @@ def render_analytics_page():
 
             fig = go.Figure(data=[go.Bar(
                 x=bin_labels, y=counts,
-                marker=dict(color=bar_colors, cornerradius=4),
+                marker=dict(color=bar_colors, cornerradius=0),
                 text=counts, textposition="outside",
-                textfont=dict(color="#94a3b8", size=10),
+                textfont=dict(color="#888888", size=10),
             )])
             fig.update_layout(
                 **CHART_LAYOUT, height=280,
-                title=dict(text="TTC Distribution", font=dict(size=13, color="#e2e8f0")),
+                title=dict(text="TTC Distribution", font=dict(size=13, color="#FFFFFF", family="Space Grotesk")),
                 xaxis_title="TTC (seconds)", yaxis_title="Frequency",
             )
             st.plotly_chart(fig, use_container_width=True)
@@ -281,14 +281,14 @@ def render_analytics_page():
                     name=sev.upper(),
                     marker=dict(
                         color=COLORS[sev], size=8,
-                        line=dict(width=1, color="#0b0e17"),
+                        line=dict(width=1, color="#050505"),
                     ),
                 ))
         fig.update_layout(
             **CHART_LAYOUT, height=280,
-            title=dict(text="TTC Over Video Time", font=dict(size=13, color="#e2e8f0")),
+            title=dict(text="TTC Over Video Time", font=dict(size=13, color="#FFFFFF", family="Space Grotesk")),
             xaxis_title="Video Time (seconds)", yaxis_title="TTC (seconds)",
-            legend=dict(font=dict(color="#e2e8f0")),
+            legend=dict(font=dict(color="#FFFFFF")),
         )
         st.plotly_chart(fig, use_container_width=True)
 
@@ -371,7 +371,7 @@ def render_analytics_page():
             fig.update_layout(
                 **CHART_LAYOUT, height=300,
                 title=dict(text="Vehicles Over Time",
-                           font=dict(size=13, color="#e2e8f0")),
+                           font=dict(size=13, color="#FFFFFF", family="Space Grotesk")),
                 xaxis_title="Video Time (s)", yaxis_title="Vehicle Count",
             )
             st.plotly_chart(fig, use_container_width=True)
@@ -391,7 +391,7 @@ def render_analytics_page():
                 x=[d["time"] for d in dvr],
                 y=[d["risk_count"] for d in dvr],
                 name="Risk Events",
-                marker=dict(color=COLORS["high"], opacity=0.7, cornerradius=4),
+                marker=dict(color=COLORS["high"], opacity=0.9, cornerradius=0),
                 yaxis="y",
             ))
             fig.add_trace(go.Scatter(
@@ -400,19 +400,19 @@ def render_analytics_page():
                 name="Avg Density",
                 mode="lines+markers",
                 line=dict(color=COLORS["blue"], width=2),
-                marker=dict(size=5),
+                marker=dict(size=5, symbol="square"),
                 yaxis="y2",
             ))
             fig.update_layout(
                 **CHART_LAYOUT, height=300,
                 title=dict(text="Traffic Density vs Observed Risk Events",
-                           font=dict(size=13, color="#e2e8f0")),
+                           font=dict(size=13, color="#FFFFFF", family="Space Grotesk")),
                 xaxis_title="Time Bucket (s)",
                 yaxis=dict(title="Risk Events", side="left",
-                           gridcolor="rgba(30,39,64,0.6)"),
+                           gridcolor="rgba(255,255,255,0.05)"),
                 yaxis2=dict(title="Avg Vehicles", side="right",
-                            overlaying="y", gridcolor="rgba(30,39,64,0.3)"),
-                legend=dict(font=dict(color="#e2e8f0"),
+                            overlaying="y", gridcolor="rgba(255,255,255,0.02)"),
+                legend=dict(font=dict(color="#FFFFFF"),
                             x=0.01, y=0.99, bgcolor="rgba(0,0,0,0)"),
             )
             st.plotly_chart(fig, use_container_width=True)
@@ -490,42 +490,42 @@ def render_analytics_page():
     </div>
     <div class="section-line"></div>
 
-    <div style="background: linear-gradient(145deg, #131825, #171d2e);
-                border: 1px solid #1e2740; border-radius: 12px;
-                padding: 24px; margin-top: 8px;">
-        <table style="width: 100%; color: #cbd5e1; font-size: 0.88rem;
+    <div style="background: #0A0A0A;
+                border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 0px;
+                padding: 32px; margin-top: 8px;">
+        <table style="width: 100%; color: #CCCCCC; font-size: 0.88rem;
                       border-collapse: collapse;">
-            <tr><td style="padding: 8px 12px; color: #64748b; width: 200px;">Video</td>
-                <td style="font-family: JetBrains Mono; font-weight: 500;">
+            <tr><td style="padding: 10px 12px; color: #777777; width: 200px; border-bottom: 1px solid rgba(255,255,255,0.05);">Video</td>
+                <td style="font-family: JetBrains Mono; font-weight: 500; border-bottom: 1px solid rgba(255,255,255,0.05);">
                     {summary['video_file']}</td></tr>
-            <tr><td style="padding: 8px 12px; color: #64748b;">Frames Processed</td>
-                <td style="font-family: JetBrains Mono; font-weight: 600;">
+            <tr><td style="padding: 10px 12px; color: #777777; border-bottom: 1px solid rgba(255,255,255,0.05);">Frames Processed</td>
+                <td style="font-family: JetBrains Mono; font-weight: 500; border-bottom: 1px solid rgba(255,255,255,0.05);">
                     {summary['total_frames']:,}</td></tr>
-            <tr><td style="padding: 8px 12px; color: #64748b;">Processing FPS</td>
-                <td style="font-family: JetBrains Mono;">
+            <tr><td style="padding: 10px 12px; color: #777777; border-bottom: 1px solid rgba(255,255,255,0.05);">Processing FPS</td>
+                <td style="font-family: JetBrains Mono; border-bottom: 1px solid rgba(255,255,255,0.05);">
                     {summary['processing_fps']}</td></tr>
-            <tr><td style="padding: 8px 12px; color: #64748b;">Unique Vehicles</td>
-                <td style="font-family: JetBrains Mono; font-weight: 600;">
+            <tr><td style="padding: 10px 12px; color: #777777; border-bottom: 1px solid rgba(255,255,255,0.05);">Unique Vehicles</td>
+                <td style="font-family: JetBrains Mono; font-weight: 500; border-bottom: 1px solid rgba(255,255,255,0.05);">
                     {summary['unique_vehicles']}</td></tr>
-            <tr><td style="padding: 8px 12px; color: #64748b;">Total Risk Events</td>
-                <td style="font-family: JetBrains Mono;">
+            <tr><td style="padding: 10px 12px; color: #777777; border-bottom: 1px solid rgba(255,255,255,0.05);">Total Risk Events</td>
+                <td style="font-family: JetBrains Mono; border-bottom: 1px solid rgba(255,255,255,0.05);">
                     {summary['total_risk_events']}</td></tr>
-            <tr><td style="padding: 8px 12px; color: #64748b;">High Risk</td>
-                <td style="font-family: JetBrains Mono; color: #f87171; font-weight: 600;">
+            <tr><td style="padding: 10px 12px; color: #777777; border-bottom: 1px solid rgba(255,255,255,0.05);">High Risk</td>
+                <td style="font-family: JetBrains Mono; color: #FF2A55; font-weight: 600; border-bottom: 1px solid rgba(255,255,255,0.05);">
                     {summary['high_risk']}</td></tr>
-            <tr><td style="padding: 8px 12px; color: #64748b;">Medium Risk</td>
-                <td style="font-family: JetBrains Mono; color: #fbbf24;">
+            <tr><td style="padding: 10px 12px; color: #777777; border-bottom: 1px solid rgba(255,255,255,0.05);">Medium Risk</td>
+                <td style="font-family: JetBrains Mono; color: #FFD700; border-bottom: 1px solid rgba(255,255,255,0.05);">
                     {summary['medium_risk']}</td></tr>
-            <tr><td style="padding: 8px 12px; color: #64748b;">Total Alerts</td>
-                <td style="font-family: JetBrains Mono; font-weight: 600;">
+            <tr><td style="padding: 10px 12px; color: #777777; border-bottom: 1px solid rgba(255,255,255,0.05);">Total Alerts</td>
+                <td style="font-family: JetBrains Mono; font-weight: 500; border-bottom: 1px solid rgba(255,255,255,0.05);">
                     {summary['total_alerts']}</td></tr>
-            <tr><td style="padding: 8px 12px; color: #64748b;">Minimum TTC</td>
-                <td style="font-family: JetBrains Mono; color: #f87171; font-weight: 700;">
+            <tr><td style="padding: 10px 12px; color: #777777; border-bottom: 1px solid rgba(255,255,255,0.05);">Minimum TTC</td>
+                <td style="font-family: JetBrains Mono; color: #FF2A55; font-weight: 700; border-bottom: 1px solid rgba(255,255,255,0.05);">
                     {summary['min_ttc']:.3f} sec</td></tr>
-            <tr><td style="padding: 8px 12px; color: #64748b;">Average TTC</td>
-                <td style="font-family: JetBrains Mono; font-weight: 600;">
+            <tr><td style="padding: 10px 12px; color: #777777; border-bottom: 1px solid rgba(255,255,255,0.05);">Average TTC</td>
+                <td style="font-family: JetBrains Mono; font-weight: 500; border-bottom: 1px solid rgba(255,255,255,0.05);">
                     {summary['avg_ttc']:.3f} sec</td></tr>
-            <tr><td style="padding: 8px 12px; color: #64748b;">Median TTC</td>
+            <tr><td style="padding: 10px 12px; color: #777777;">Median TTC</td>
                 <td style="font-family: JetBrains Mono;">
                     {summary['median_ttc']:.3f} sec</td></tr>
         </table>
